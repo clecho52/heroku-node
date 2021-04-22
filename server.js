@@ -1,23 +1,31 @@
-var express = require('express');
-var app = express();
+const { Telegraf } = require('telegraf')
+let wordlist = ["ДОБР", "ПРЕТЕНД", "УБИВ", "ДЕЦ", "АНОНИМИН", "КРИНДЖ", "БАЗ", "ШИ","АСПИР","МЕНТАЛ","ДИРИЖИРА"];
+let schizolist = ["ИРАМ", "ЕМЕЧЕ", "ЕНЦЕ", "ИРА", "ЕН ","СКИ","ИРАШ ОТНОВО?"];
+let prefixes=["УЛТРА","ШИЗО","БАВНО","ПЕДО","НАЙКИ","ЬЛ","ЛОРЕМЧ","СВАПЧО"]
+let prefixChance=function(seed){
+if(seed>0.7){
+return prefixes[currentrandomthree] 
+}else{
+return ""
+}
+}
 
-// set the port of our application
-// process.env.PORT lets the port be set by Heroku
-var port = process.env.PORT || 8080;
 
-// set the view engine to ejs
-app.set('view engine', 'ejs');
+const bot = new Telegraf("1703328023:AAFJWrNJUNAj6w-dS_ZNUdCtu14SVF2J2cM")
+bot.hears('/tedospeak', (ctx) => {
+    empty=""
+    for (i = 0; i < Math.random()*24; i++) {
+        seed=Math.random()
+          schizolist[schizolist.length-1] = " ЕН" + wordlist[Math.ceil(Math.random() * wordlist.length-1)] + "ИРАШ ОТНОВО?"
+          currentrandomone = Math.ceil(Math.random() * wordlist.length-1)
+          currentrandomtwo = Math.ceil(Math.random() * schizolist.length-1)
+          currentrandomthree = Math.ceil(Math.random() * prefixes.length-1)
+          empty += " " +prefixChance(seed)+ wordlist[currentrandomone] + schizolist[currentrandomtwo]
+        }
+        
+    ctx.reply(empty)})
+bot.launch()
 
-// make express look in the public directory for assets (css/js/img)
-app.use(express.static(__dirname + '/public'));
-
-// set the home page route
-app.get('/', function(req, res) {
-
-	// ejs render automatically looks in the views folder
-	res.render('index');
-});
-
-app.listen(port, function() {
-	console.log('Our app is running on http://localhost:' + port);
-});
+// Enable graceful stop
+process.once('SIGINT', () => bot.stop('SIGINT'))
+process.once('SIGTERM', () => bot.stop('SIGTERM'))
